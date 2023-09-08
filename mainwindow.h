@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -32,17 +31,17 @@ public slots:
    */
   void browseColorPalette();
 
+  /**
+   * @brief Calls a function in FileHandler that will
+   * generate image and render it
+   */
+  void renderImage();
+
 
 private:
   Ui::MainWindow *ui;
 
-  /// Image that will be generated and shown later
-  QImage m_image;
-
-  /// File handler for CT scan
-  FileHandler m_fhCTScan;
-  /// File handler for color palette
-  FileHandler m_fhColorPalette;
+  /// File handler for CT scan and color pallete
+  CFileHandler m_fileHandler;
 };
 
-#endif // MAINWINDOW_H

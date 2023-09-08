@@ -12,8 +12,10 @@ MainWindow::MainWindow(QWidget *parent)
   // On click browse files
   QPushButton* pPbBrowseCTImage = ui->pbBrowseCTImage;
   QPushButton* pPbBrowseColor   = ui->pbBrowseColor;
+  QPushButton* pPbGenerateImg   = ui->pbGenerate;
   connect(pPbBrowseCTImage, SIGNAL(clicked()), this, SLOT(browseCTImage()));
   connect(pPbBrowseColor,   SIGNAL(clicked()), this, SLOT(browseColorPalette()));
+  connect(pPbGenerateImg,   SIGNAL(clicked()), this, SLOT(renderImage()));
 }
 
 MainWindow::~MainWindow()
@@ -24,11 +26,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::browseCTImage()
 {
-  const QString fileName = m_fhCTScan.browseFile("*.img", FileHandler::FileType::CT_SCAN);
+  const QString fileName = m_fileHandler.browseFile("*.img", CFileHandler::EFileType::CT_SCAN);
   ui->leCTImagePath->setText(fileName);
 
   // Enable 'Generate image' button if both files are valid
-  if (m_fhCTScan.isFileValid() && m_fhColorPalette.isFileValid())
+  if (m_fileHandler.areFilesReady())
   {
     ui->pbGenerate->setEnabled(true);
   }
@@ -36,12 +38,18 @@ void MainWindow::browseCTImage()
 
 void MainWindow::browseColorPalette()
 {
-  const QString fileName = m_fhColorPalette.browseFile("*.lut", FileHandler::FileType::COLOR_PALETTE);
+  const QString fileName = m_fileHandler.browseFile("*.lut", CFileHandler::EFileType::COLOR_PALETTE);
   ui->leColorPalettePath->setText(fileName);
 
   // Enable 'Generate image' button if both files are valid
-  if (m_fhCTScan.isFileValid() && m_fhColorPalette.isFileValid())
+  if (m_fileHandler.areFilesReady())
   {
     ui->pbGenerate->setEnabled(true);
   }
+}
+
+void MainWindow::renderImage()
+{
+  QImage& image = m_fileHandler.generateImage();
+  // TODO: finish
 }
