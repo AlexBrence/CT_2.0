@@ -1,10 +1,11 @@
 #pragma once
 
-
 #include <QWidget>
 #include <QFile>
 #include <QVector>
 #include <QByteArray>
+
+#include <cstdint>
 
 /**
  * Class that handles browsing and loading files. It also handles
@@ -13,6 +14,11 @@
 class CFileHandler
 {
 public:
+  static constexpr uint16_t CT_WIDTH  = 512;
+  static constexpr uint16_t CT_HEIGHT = 512;
+  static constexpr uint16_t COLOR_PALETTE_WIDTH  = 256;
+  static constexpr uint16_t COLOR_PALETTE_HEIGHT =   3;
+
   enum class EFileType {
     CT_SCAN,
     COLOR_PALETTE
@@ -33,15 +39,19 @@ public:
    */
   bool areFilesReady() const;
 
-  QImage& generateImage();
+  /**
+   * @brief Generates the image from CT scan and color palette
+   * @return QImage generated image
+   */
+  QImage generateImage();
 
 
 private:
   QString m_strFileNameCT;
   QString m_strFileNameColor;
   // TODO: reserve space in the constructor
-  QVector<QVector<short>> m_v2CTScan;        // 256 * 3
-  QVector<QByteArray>     m_vbyColorPalette; // 512 * 512
+  QVector<QVector<short>> m_v2CTScan;        // 512 * 512
+  QVector<QByteArray>     m_vbyColorPalette; // 256 * 3
   bool m_bParsed = false;
 
 

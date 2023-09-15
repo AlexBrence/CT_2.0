@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "canvas.h"
 
 #include <QDebug>
 
@@ -25,7 +26,7 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::browseCTImage()
-{
+{ // TODO: figure out why it works only once
   const QString fileName = m_fileHandler.browseFile("*.img", CFileHandler::EFileType::CT_SCAN);
   ui->leCTImagePath->setText(fileName);
 
@@ -37,7 +38,7 @@ void MainWindow::browseCTImage()
 }
 
 void MainWindow::browseColorPalette()
-{
+{ // TODO: figure out why it works only once
   const QString fileName = m_fileHandler.browseFile("*.lut", CFileHandler::EFileType::COLOR_PALETTE);
   ui->leColorPalettePath->setText(fileName);
 
@@ -50,6 +51,6 @@ void MainWindow::browseColorPalette()
 
 void MainWindow::renderImage()
 {
-  QImage& image = m_fileHandler.generateImage();
-  // TODO: finish
+  QImage image = m_fileHandler.generateImage();
+  ui->canvas_image->renderImage(std::move(image));
 }

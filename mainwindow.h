@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QMainWindow>
-
 #include "filehandler.h"
+
+#include <QMainWindow>
 
 
 QT_BEGIN_NAMESPACE

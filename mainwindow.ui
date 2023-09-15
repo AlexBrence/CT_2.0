@@ -144,18 +144,28 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="lblImage">
+   <widget class="CCanvas" name="canvas_image" native="true">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>70</x>
       <y>130</y>
       <width>512</width>
       <height>512</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
-    </property>
+    <widget class="QLabel" name="lblImage">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>512</width>
+       <height>512</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -170,6 +180,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CCanvas</class>
+   <extends>QWidget</extends>
+   <header>canvas.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

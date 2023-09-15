@@ -2,14 +2,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
-
-#include <cstdint>
-
-
-constexpr uint16_t CT_WIDTH  = 512;
-constexpr uint16_t CT_HEIGHT = 512;
-constexpr uint16_t COLOR_PALETTE_WIDTH  = 256;
-constexpr uint16_t COLOR_PALETTE_HEIGHT = 3;
+#include <QRgb>
 
 
 CFileHandler::CFileHandler()
@@ -40,7 +33,7 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
   // Read content into a vector
   for (size_t i = 0; i < CT_WIDTH; i++)
   {
-    aBytes = file.read(CT_HEIGHT);
+    aBytes = file.read(CT_HEIGHT * 2);
     assert(aBytes.size() != 0);
 
     QVector<short> vBytes;
@@ -106,15 +99,12 @@ QString CFileHandler::browseFile(const QString& filter, const EFileType fileType
       case EFileType::CT_SCAN:
         m_bParsed = _parseCTScan(strFileName);
         break;
-
       case EFileType::COLOR_PALETTE:
         m_bParsed = _parseColorPalette(strFileName);
         break;
-
       default:
         qDebug() << QString(__FUNCTION__) + " default case, shouldn't happened.";
         assert(0);
-        break;
     }
   }
 
@@ -123,11 +113,26 @@ QString CFileHandler::browseFile(const QString& filter, const EFileType fileType
 
 
 bool CFileHandler::areFilesReady() const
-{
-  return m_bParsed;
+{ // TODO: make this better
+  return (!m_v2CTScan.empty() && !m_vbyColorPalette.empty());
 }
 
-QImage& CFileHandler::generateImage()
+
+QImage CFileHandler::generateImage()
 {
-  throw std::logic_error("Not implemented yet");
+  QImage img(CFileHandler::CT_WIDTH, CFileHandler::CT_HEIGHT, QImage::Format_RGB888);
+
+  // Convert every pixel from CT image to RGB value
+  for (size_t i = 0; i < CFileHandler::CT_WIDTH; i++)
+  {
+    for (size_t j = 0; j < CFileHandler::CT_HEIGHT; j++)
+    {
+      quint8 colorIdx = (static_cast<float>(m_v2CTScan[i][j] + 2048) / 4095) * 255;
+      QRgb   color    = qRgb(m_vbyColorPalette[colorIdx][0], m_vbyColorPalette[colorIdx][1], m_vbyColorPalette[colorIdx][2]);
+      img.setPixel(i, j, color);
+    }
+  }
+
+  return img;
 }
+
