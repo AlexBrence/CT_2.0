@@ -6,14 +6,34 @@
 
 
 CFileHandler::CFileHandler()
-{}
+{
+  // Reserve space
+  m_v2CTScan.reserve(CT_WIDTH);
+  for (QVector<short>& v : m_v2CTScan)
+  {
+    v.reserve(CT_HEIGHT);
+  }
+
+  m_vbyColorPalette.reserve(COLOR_PALETTE_WIDTH);
+  for (QByteArray& aBytes : m_vbyColorPalette)
+  {
+    aBytes.reserve(COLOR_PALETTE_HEIGHT);
+  }
+
+}
 
 
 bool CFileHandler::_parseCTScan(const QString& strFileName)
 {
+  // Clear the vector
+  for (QVector<short> inner : m_v2CTScan)
+  {
+    inner.clear();
+  }
+  m_v2CTScan.clear();
+
   // Open a file
   QFile file(strFileName);
-  // TODO: should you clear the vector first?
 
   if (!file.open(QIODevice::ReadOnly))
   {
@@ -21,12 +41,6 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
     return false;
   }
 
-  // Reserve space
-  m_v2CTScan.reserve(CT_WIDTH);
-  for (QVector<short>& v : m_v2CTScan)
-  {
-    v.reserve(CT_HEIGHT);
-  }
   QByteArray aBytes;
   aBytes.reserve(CT_HEIGHT);
 
@@ -56,6 +70,12 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
 
 bool CFileHandler::_parseColorPalette(const QString& strFileName)
 {
+  for (QByteArray byArr : m_vbyColorPalette)
+  {
+    byArr.clear();
+  }
+  m_vbyColorPalette.clear();
+
   // Open a file
   QFile file(strFileName);
 
@@ -63,13 +83,6 @@ bool CFileHandler::_parseColorPalette(const QString& strFileName)
   {
     qDebug() << "Could not read the file in: " + QString(__FUNCTION__);
     return false;
-  }
-
-  // Reserve space
-  m_vbyColorPalette.reserve(COLOR_PALETTE_WIDTH);
-  for (QByteArray& aBytes : m_vbyColorPalette)
-  {
-    aBytes.reserve(COLOR_PALETTE_HEIGHT);
   }
 
   // Read content into vector

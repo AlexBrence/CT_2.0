@@ -9,8 +9,6 @@ class CCanvas : public QWidget
 
 public:
   explicit CCanvas(QWidget *parent = nullptr);
-  ~CCanvas();
-
 
   /**
    * @brief Renders the image
@@ -26,6 +24,4 @@ public:
 
 private:
   QImage  m_image;
-  QLabel* m_label;
-
 };

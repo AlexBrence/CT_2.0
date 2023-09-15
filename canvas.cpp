@@ -6,20 +6,9 @@
 
 
 CCanvas::CCanvas(QWidget *parent)
-    : QWidget{parent}, m_label(new QLabel(this))
-{
-  // TODO: do you need this?
-  // QHBoxLayout* layout = new QHBoxLayout(this);
+    : QWidget{parent}
+{}
 
-  m_label->setFixedSize(CFileHandler::CT_WIDTH, CFileHandler::CT_HEIGHT);
-
-  // delete layout;
-}
-
-CCanvas::~CCanvas()
-{
-  delete m_label;
-}
 
 void CCanvas::renderImage(QImage&& image)
 {
@@ -36,6 +25,6 @@ void CCanvas::paintEvent(QPaintEvent* paintEvent)
     QWidget::paintEvent(paintEvent);
     return;
   }
-  QPixmap pixmap = QPixmap::fromImage(m_image);
-  m_label->setPixmap(pixmap);
+  QPainter painter(this);
+  painter.drawImage(0, 0, m_image);
 }

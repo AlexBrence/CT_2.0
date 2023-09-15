@@ -49,7 +49,6 @@ public:
 private:
   QString m_strFileNameCT;
   QString m_strFileNameColor;
-  // TODO: reserve space in the constructor
   QVector<QVector<short>> m_v2CTScan;        // 512 * 512
   QVector<QByteArray>     m_vbyColorPalette; // 256 * 3
   bool m_bParsed = false;

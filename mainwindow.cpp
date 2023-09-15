@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::browseCTImage()
-{ // TODO: figure out why it works only once
+{
   const QString fileName = m_fileHandler.browseFile("*.img", CFileHandler::EFileType::CT_SCAN);
   ui->leCTImagePath->setText(fileName);
 
@@ -38,7 +38,7 @@ void MainWindow::browseCTImage()
 }
 
 void MainWindow::browseColorPalette()
-{ // TODO: figure out why it works only once
+{
   const QString fileName = m_fileHandler.browseFile("*.lut", CFileHandler::EFileType::COLOR_PALETTE);
   ui->leColorPalettePath->setText(fileName);
 
