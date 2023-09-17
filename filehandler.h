@@ -56,5 +56,7 @@ private:
 
   bool _parseCTScan(const QString& strFileName);
   bool _parseColorPalette(const QString& strFileName);
+  void _clearV2CTScan();
+  void _clearVbyColorPalette();
 };
 

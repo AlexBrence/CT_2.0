@@ -1,5 +1,6 @@
 #include "filehandler.h"
 
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
 #include <QRgb>
@@ -23,40 +24,61 @@ CFileHandler::CFileHandler()
 }
 
 
-bool CFileHandler::_parseCTScan(const QString& strFileName)
+void CFileHandler::_clearV2CTScan()
 {
-  // Clear the vector
   for (QVector<short> inner : m_v2CTScan)
   {
     inner.clear();
   }
   m_v2CTScan.clear();
+}
+
+
+void CFileHandler::_clearVbyColorPalette()
+{
+  for (QByteArray byArr : m_vbyColorPalette)
+  {
+    byArr.clear();
+  }
+  m_vbyColorPalette.clear();
+}
+
+
+bool CFileHandler::_parseCTScan(const QString& strFileName)
+{
+  // Clear the vector
+  _clearV2CTScan();
 
   // Open a file
   QFile file(strFileName);
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    qDebug() << "Could not read the file in: " + QString(__FUNCTION__);
+    qWarning() << "Could not read the file in: " + QString(__FUNCTION__);
     return false;
   }
 
-  QByteArray aBytes;
-  aBytes.reserve(CT_HEIGHT);
+  QByteArray aBytesRead;
+  aBytesRead.reserve(CT_HEIGHT); // TODO: * 2?
 
   // Read content into a vector
   for (size_t i = 0; i < CT_WIDTH; i++)
   {
-    aBytes = file.read(CT_HEIGHT * 2);
-    assert(aBytes.size() != 0);
+    aBytesRead = file.read(CT_HEIGHT * 2);
+    if (aBytesRead.size() != CT_HEIGHT * 2)
+    {
+      qWarning() << "Error while reading from CT scan file!";
+      _clearV2CTScan();
+      return false;
+    }
 
     QVector<short> vBytes;
-    vBytes.reserve(aBytes.size() / sizeof(short));
+    vBytes.reserve(aBytesRead.size() / sizeof(short));
 
     // Convert bytes to short and push it into vector
-    const char* pData = aBytes.constData();
+    const char* pData = aBytesRead.constData();
 
-    for (qsizetype i = 0; i < aBytes.size(); i += sizeof(short))
+    for (qsizetype i = 0; i < aBytesRead.size(); i += sizeof(short))
     {
       short value = *reinterpret_cast<const short*>(pData + i);
       vBytes.append(std::move(value));
@@ -70,25 +92,30 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
 
 bool CFileHandler::_parseColorPalette(const QString& strFileName)
 {
-  for (QByteArray byArr : m_vbyColorPalette)
-  {
-    byArr.clear();
-  }
-  m_vbyColorPalette.clear();
+  // Clear the vector
+  _clearVbyColorPalette();
 
   // Open a file
   QFile file(strFileName);
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    qDebug() << "Could not read the file in: " + QString(__FUNCTION__);
+    qWarning() << "Could not read the file in: " + QString(__FUNCTION__);
     return false;
   }
 
   // Read content into vector
   for (size_t i = 0; i < COLOR_PALETTE_WIDTH; i++)
-  { // TODO: check if correct number of bytes were read
-    m_vbyColorPalette.push_back(file.read(COLOR_PALETTE_HEIGHT));
+  {
+    QByteArray aBytesRead = file.read(COLOR_PALETTE_HEIGHT);
+    if (aBytesRead.size() != 3)
+    {
+      qWarning() << "Error while reading from color palette file!";
+      _clearVbyColorPalette();
+      return false;
+    }
+
+    m_vbyColorPalette.push_back(std::move(aBytesRead));
   }
 
   return true;
@@ -121,7 +148,7 @@ QString CFileHandler::browseFile(const QString& filter, const EFileType fileType
     }
   }
 
-  return strFileName;
+  return m_bParsed ? strFileName : "";
 }
 
 

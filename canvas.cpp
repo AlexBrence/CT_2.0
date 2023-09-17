@@ -21,7 +21,6 @@ void CCanvas::paintEvent(QPaintEvent* paintEvent)
 {
   if (m_image.isNull())
   {
-    qDebug() << "Image is null, calling the default method";
     QWidget::paintEvent(paintEvent);
     return;
   }

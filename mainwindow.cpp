@@ -3,6 +3,7 @@
 #include "canvas.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -28,6 +29,11 @@ MainWindow::~MainWindow()
 void MainWindow::browseCTImage()
 {
   const QString fileName = m_fileHandler.browseFile("*.img", CFileHandler::EFileType::CT_SCAN);
+  if (fileName.isEmpty())
+  {
+    QMessageBox::warning(this, QObject::tr("Invalid file"), QObject::tr("Could not parse the file!"));
+    return;
+  }
   ui->leCTImagePath->setText(fileName);
 
   // Enable 'Generate image' button if both files are valid
@@ -40,6 +46,11 @@ void MainWindow::browseCTImage()
 void MainWindow::browseColorPalette()
 {
   const QString fileName = m_fileHandler.browseFile("*.lut", CFileHandler::EFileType::COLOR_PALETTE);
+  if (fileName.isEmpty())
+  {
+    QMessageBox::warning(this, QObject::tr("Invalid file"), QObject::tr("Could not parse the file!"));
+    return;
+  }
   ui->leColorPalettePath->setText(fileName);
 
   // Enable 'Generate image' button if both files are valid
