@@ -45,13 +45,20 @@ public:
    */
   QImage generateImage();
 
+  /**
+   * @brief Saves the image that is currently being displayed
+   * @return true if saved successfully
+   */
+  bool saveImage() const;
+
 
 private:
-  QString m_strFileNameCT;
-  QString m_strFileNameColor;
+  QString                 m_strFileNameCT;
+  QString                 m_strFileNameColor;
   QVector<QVector<short>> m_v2CTScan;        // 512 * 512
   QVector<QByteArray>     m_vbyColorPalette; // 256 * 3
-  bool m_bParsed = false;
+  QImage                  m_image   = QImage(CFileHandler::CT_WIDTH, CFileHandler::CT_HEIGHT, QImage::Format_RGB888);
+  bool                    m_bParsed = false;
 
 
   bool _parseCTScan(const QString& strFileName);

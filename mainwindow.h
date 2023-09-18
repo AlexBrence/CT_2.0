@@ -37,6 +37,11 @@ public slots:
    */
   void renderImage();
 
+  /**
+   * @brief Tells filehandler to save image
+   */
+  void saveImage();
+
 
 private:
   Ui::MainWindow *ui;

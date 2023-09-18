@@ -15,9 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
   QPushButton* pPbBrowseCTImage = ui->pbBrowseCTImage;
   QPushButton* pPbBrowseColor   = ui->pbBrowseColor;
   QPushButton* pPbGenerateImg   = ui->pbGenerate;
+  QPushButton* pPbSaveImg       = ui->pbSave;
   connect(pPbBrowseCTImage, SIGNAL(clicked()), this, SLOT(browseCTImage()));
   connect(pPbBrowseColor,   SIGNAL(clicked()), this, SLOT(browseColorPalette()));
   connect(pPbGenerateImg,   SIGNAL(clicked()), this, SLOT(renderImage()));
+  connect(pPbSaveImg,       SIGNAL(clicked()), this, SLOT(saveImage()));
 }
 
 MainWindow::~MainWindow()
@@ -64,4 +66,20 @@ void MainWindow::renderImage()
 {
   QImage image = m_fileHandler.generateImage();
   ui->canvas_image->renderImage(std::move(image));
+
+  // Enable saving
+  ui->pbSave->setEnabled(true);
+}
+
+void MainWindow::saveImage()
+{
+  bool bSaved = m_fileHandler.saveImage();
+  if (bSaved)
+  {
+    QMessageBox::information(this, QObject::tr("Save image"), QObject::tr("Saved successfully"));
+  }
+  else
+  {
+    QMessageBox::warning(this, QObject::tr("Saving unsuccessful"), QObject::tr("Could not save the image."));
+  }
 }

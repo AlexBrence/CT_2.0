@@ -20,7 +20,6 @@ CFileHandler::CFileHandler()
   {
     aBytes.reserve(COLOR_PALETTE_HEIGHT);
   }
-
 }
 
 
@@ -59,7 +58,7 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
   }
 
   QByteArray aBytesRead;
-  aBytesRead.reserve(CT_HEIGHT); // TODO: * 2?
+  aBytesRead.reserve(CT_HEIGHT * 2); // short = 2 bytes
 
   // Read content into a vector
   for (size_t i = 0; i < CT_WIDTH; i++)
@@ -153,26 +152,36 @@ QString CFileHandler::browseFile(const QString& filter, const EFileType fileType
 
 
 bool CFileHandler::areFilesReady() const
-{ // TODO: make this better
-  return (!m_v2CTScan.empty() && !m_vbyColorPalette.empty());
+{
+  return !m_v2CTScan.empty() && !m_vbyColorPalette.empty();
 }
 
 
 QImage CFileHandler::generateImage()
 {
-  QImage img(CFileHandler::CT_WIDTH, CFileHandler::CT_HEIGHT, QImage::Format_RGB888);
-
   // Convert every pixel from CT image to RGB value
   for (size_t i = 0; i < CFileHandler::CT_WIDTH; i++)
   {
     for (size_t j = 0; j < CFileHandler::CT_HEIGHT; j++)
     {
       quint8 colorIdx = (static_cast<float>(m_v2CTScan[i][j] + 2048) / 4095) * 255;
-      QRgb   color    = qRgb(m_vbyColorPalette[colorIdx][0], m_vbyColorPalette[colorIdx][1], m_vbyColorPalette[colorIdx][2]);
-      img.setPixel(i, j, color);
+      QRgb   color    = qRgb(m_vbyColorPalette[colorIdx][0],
+                             m_vbyColorPalette[colorIdx][1],
+                             m_vbyColorPalette[colorIdx][2]);
+      m_image.setPixel(i, j, color);
     }
   }
 
-  return img;
+  return m_image;
 }
 
+
+bool CFileHandler::saveImage() const
+{
+  QString strFileName = QFileDialog::getSaveFileName(
+      nullptr,
+      QDialog::tr("Save Image"),
+      ""
+  );
+  return m_image.save(strFileName + ".png", "PNG", 0);
+}
