@@ -28,10 +28,18 @@ public:
 
   /**
    * @brief  Opens a file dialog and returns file path of the chosen file
-   * @param  filter  filter files to specific needs
-   * @return QString file name with absolute path
+   * @param  strFilter    filter files to specific needs
+   * @param  fileType  type of the file
+   * @return QString   file name with absolute path
    */
-  QString browseFile(const QString& filter, const EFileType fileType);
+  QString browseFile(const QString& strFilter, const EFileType fileType);
+
+  /**
+   * @brief Sets the file if user has used drag and drop, parses the file
+   * @param strFileName full path of the file
+   * @param fileType    type of the file
+   */
+  void setFile(const QString& strFileName, const EFileType fileType);
 
   /**
    * @brief Returns whether a file has been successfully parsed
@@ -47,7 +55,7 @@ public:
 
   /**
    * @brief Saves the image that is currently being displayed
-   * @return true if saved successfully
+   * @return bool true if saved successfully
    */
   bool saveImage() const;
 

@@ -31,6 +31,8 @@ public slots:
    */
   void browseColorPalette();
 
+  void fileDropped(const QString& strFileName, const CFileHandler::EFileType fileType);
+
   /**
    * @brief Calls a function in FileHandler that will
    * generate image and render it

@@ -11,15 +11,25 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  CLineEditDragDrop* const pleCTImage      = ui->leCTImagePath;
+  CLineEditDragDrop* const pleColorPalette = ui->leColorPalettePath;
+
+  // Set file type
+  pleCTImage->setFileType(CFileHandler::EFileType::CT_SCAN);
+  pleColorPalette->setFileType(CFileHandler::EFileType::COLOR_PALETTE);
+
+  connect(pleCTImage, &CLineEditDragDrop::textChanged, this, [=]() {
+    fileDropped(pleCTImage->getFileName(), pleCTImage->getFileType());
+  });
+  connect(pleColorPalette, &CLineEditDragDrop::textChanged, this, [=]() {
+    fileDropped(pleColorPalette->getFileName(), pleColorPalette->getFileType());
+  });
+
   // On click browse files
-  QPushButton* pPbBrowseCTImage = ui->pbBrowseCTImage;
-  QPushButton* pPbBrowseColor   = ui->pbBrowseColor;
-  QPushButton* pPbGenerateImg   = ui->pbGenerate;
-  QPushButton* pPbSaveImg       = ui->pbSave;
-  connect(pPbBrowseCTImage, SIGNAL(clicked()), this, SLOT(browseCTImage()));
-  connect(pPbBrowseColor,   SIGNAL(clicked()), this, SLOT(browseColorPalette()));
-  connect(pPbGenerateImg,   SIGNAL(clicked()), this, SLOT(renderImage()));
-  connect(pPbSaveImg,       SIGNAL(clicked()), this, SLOT(saveImage()));
+  connect(ui->pbBrowseCTImage, SIGNAL(clicked()), this, SLOT(browseCTImage()));
+  connect(ui->pbBrowseColor,   SIGNAL(clicked()), this, SLOT(browseColorPalette()));
+  connect(ui->pbSave,          SIGNAL(clicked()), this, SLOT(saveImage()));
+
 }
 
 MainWindow::~MainWindow()
@@ -38,12 +48,12 @@ void MainWindow::browseCTImage()
   }
   ui->leCTImagePath->setText(fileName);
 
-  // Enable 'Generate image' button if both files are valid
   if (m_fileHandler.areFilesReady())
   {
-    ui->pbGenerate->setEnabled(true);
+    renderImage();
   }
 }
+
 
 void MainWindow::browseColorPalette()
 {
@@ -55,12 +65,23 @@ void MainWindow::browseColorPalette()
   }
   ui->leColorPalettePath->setText(fileName);
 
-  // Enable 'Generate image' button if both files are valid
   if (m_fileHandler.areFilesReady())
   {
-    ui->pbGenerate->setEnabled(true);
+    renderImage();
   }
 }
+
+
+void MainWindow::fileDropped(const QString& strFileName, const CFileHandler::EFileType fileType)
+{
+  m_fileHandler.setFile(strFileName, fileType);
+
+  if (m_fileHandler.areFilesReady())
+  {
+    renderImage();
+  }
+}
+
 
 void MainWindow::renderImage()
 {
@@ -71,15 +92,19 @@ void MainWindow::renderImage()
   ui->pbSave->setEnabled(true);
 }
 
+
 void MainWindow::saveImage()
 {
   bool bSaved = m_fileHandler.saveImage();
   if (bSaved)
   {
-    QMessageBox::information(this, QObject::tr("Save image"), QObject::tr("Saved successfully"));
+    QMessageBox::information(this, QObject::tr("Save image"), QObject::tr("Saved successfully."));
   }
   else
   {
     QMessageBox::warning(this, QObject::tr("Saving unsuccessful"), QObject::tr("Could not save the image."));
   }
 }
+
+
+

@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
     canvas.cpp \
     filehandler.cpp \
+    lineeditdragdrop.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     canvas.h \
     filehandler.h \
+    lineeditdragdrop.h \
     mainwindow.h
 
 FORMS += \

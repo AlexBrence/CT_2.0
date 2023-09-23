@@ -53,7 +53,7 @@ bool CFileHandler::_parseCTScan(const QString& strFileName)
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    qWarning() << "Could not read the file in: " + QString(__FUNCTION__);
+    qWarning() << "Could not read the file (" + strFileName + ") in: " + QString(__FUNCTION__);
     return false;
   }
 
@@ -99,7 +99,7 @@ bool CFileHandler::_parseColorPalette(const QString& strFileName)
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    qWarning() << "Could not read the file in: " + QString(__FUNCTION__);
+    qWarning() << "Could not read the file (" + strFileName + ") in: " + QString(__FUNCTION__);
     return false;
   }
 
@@ -121,14 +121,14 @@ bool CFileHandler::_parseColorPalette(const QString& strFileName)
 }
 
 
-QString CFileHandler::browseFile(const QString& filter, const EFileType fileType)
+QString CFileHandler::browseFile(const QString& strFilter, const EFileType fileType)
 {
   m_bParsed = false;
   QString strFileName = QFileDialog::getOpenFileName(
       nullptr,
       "Select a file",
       "",
-      filter
+      strFilter
   );
 
   if (!strFileName.isEmpty())
@@ -148,6 +148,28 @@ QString CFileHandler::browseFile(const QString& filter, const EFileType fileType
   }
 
   return m_bParsed ? strFileName : "";
+}
+
+
+void CFileHandler::setFile(const QString& strFileName, const EFileType fileType)
+{
+  m_bParsed = false;
+
+  if (!strFileName.isEmpty())
+  {
+    switch (fileType)
+    {
+      case EFileType::CT_SCAN:
+        m_bParsed = _parseCTScan(strFileName);
+        break;
+      case EFileType::COLOR_PALETTE:
+        m_bParsed = _parseColorPalette(strFileName);
+        break;
+      default:
+        qDebug() << QString(__FUNCTION__) + " default case, shouldn't happened.";
+        assert(0);
+    }
+  }
 }
 
 
