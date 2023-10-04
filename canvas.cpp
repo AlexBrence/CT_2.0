@@ -1,8 +1,8 @@
 #include "canvas.h"
 #include "filehandler.h"
 
-#include <QPainter>
 #include <QHBoxLayout>
+#include <QPainter>
 
 
 CCanvas::CCanvas(QWidget *parent)
@@ -19,11 +19,18 @@ void CCanvas::renderImage(QImage&& image)
 
 void CCanvas::paintEvent(QPaintEvent* paintEvent)
 {
+  QPainter painter(this);
+
   if (m_image.isNull())
   {
+    // Draw a border
+    const QPen pen(Qt::gray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    painter.setPen(pen);
+    painter.drawRect(0, 0, CFileHandler::CT_WIDTH, CFileHandler::CT_HEIGHT);
+
     QWidget::paintEvent(paintEvent);
     return;
   }
-  QPainter painter(this);
+  // Draw the image
   painter.drawImage(0, 0, m_image);
 }

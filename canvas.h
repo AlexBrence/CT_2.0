@@ -23,5 +23,5 @@ public:
   void paintEvent(QPaintEvent* paintEvent) override;
 
 private:
-  QImage  m_image;
+  QImage m_image;
 };

@@ -205,5 +205,9 @@ bool CFileHandler::saveImage() const
       QDialog::tr("Save Image"),
       ""
   );
+  if (strFileName.isEmpty())
+  {
+    return false;
+  }
   return m_image.save(strFileName + ".png", "PNG", 0);
 }
